@@ -34,7 +34,7 @@ public class Board {
         }
     }
 
-    private boolean checkWin() {
+    public boolean checkWin() {
         // check for rows
         for (int r = 0; r < playerBoard.length; r++) {
             if (playerBoard[r][0] == playerBoard[r][1] && playerBoard[r][1] == playerBoard[r][2] && playerBoard[r][0] != Player.E) {
@@ -75,12 +75,22 @@ public class Board {
         return true;
     }
 
+    // Printing out the board to the system
     public void printBoard() {
         for(int i = 0; i < playerBoard.length; i++) {
             for(int j = 0; j < playerBoard[i].length; j++) {
                 System.out.print(playerBoard[i][j].toString() + " ");
             }
             System.out.println("");
+        }
+    }
+
+    // Creating a new game
+    public void resetBoard() {
+        for(int i = 0; i < playerBoard.length; i++) {
+            for(int j = 0; j < playerBoard[i].length; j++) {
+                playerBoard[i][j] = Player.E;
+            }
         }
     }
 }

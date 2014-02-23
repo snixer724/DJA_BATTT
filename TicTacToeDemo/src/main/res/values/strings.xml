@@ -2,7 +2,6 @@
 <resources>
 
     <string name="app_name">TicTacToeDemo</string>
-    <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
     <string name="col">Column</string>
     <string name="row">Row</string>

@@ -15,8 +15,12 @@ import android.widget.TextView;
 
 public class MainActivity extends ActionBarActivity {
     Board b;
-
+    int xScore = 0;
+    int oScore = 0;
+    TextView xText;
+    TextView oText;
     Player currPlayer;
+    Button[] buttons;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -29,31 +33,50 @@ public class MainActivity extends ActionBarActivity {
         }
 
         b = new Board();
+
+        // Set initial scores to zero
+        xText = (TextView) findViewById(R.id.xScore);
+        oText = (TextView) findViewById(R.id.oScore);
+        updateScore();
+
+        // Set current player
         currPlayer = Player.X;
-        final Button[] buttons = new Button[9];
+
+        // Create button array
+        buttons = new Button[9];
         for(int i = 1; i < 10; i++){
             Button btn = (Button)findViewById(getResources().getIdentifier("button" + i, "id", getPackageName()));
             btn.setTag(R.string.row,(Integer) (i-1)/3);
             btn.setTag(R.string.col,(Integer) (i-1)%3);
-
 
             btn.setOnClickListener(new View.OnClickListener() {
                 public void onClick(View v) {
                     // Perform action on click
                     ((Button)(v)).setText(currPlayer.toString());
 
-
-
                     try{
                         b.makePlay((Integer) v.getTag(R.string.row), (Integer) v.getTag(R.string.col), currPlayer);
                     }catch (RuntimeException e){
-                        ((Button)(v)).setText("Game over, " + currPlayer + " won!");
+                        if (b.checkWin()) {
+                            // Update which player won
+                            switch (currPlayer) {
+                                case X:
+                                    xScore++;
+                                    break;
+                                case O:
+                                    oScore++;
+                                    break;
+                            }
+                        }
+                        updateScore();
 
+                        // Disable all of the buttons
                         for(Button i : buttons){
                             i.setEnabled(false);
                         }
                     }
 
+                    // switch player
                     if(currPlayer == Player.O){
                         currPlayer = Player.X;
                     }else{
@@ -67,9 +90,42 @@ public class MainActivity extends ActionBarActivity {
             });
             buttons[i-1] = btn;
         }
+        // Create game buttons
+        Button newGame = (Button)findViewById(R.id.newGame);
+        Button reset = (Button)findViewById(R.id.reset);
+
+        // Anonymous button listener
+        newGame.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                fixButtons();
+            }
+        });
+
+        reset.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                fixButtons();
+                xScore = 0;
+                oScore = 0;
+                updateScore();
+            }
+        });
     }
 
+    private void updateScore() {
+        xText.setText("Player X: " + xScore);
+        oText.setText("Player O: " + oScore);
+    }
 
+    private void fixButtons() {
+        b.resetBoard();
+        for (Button b : buttons) {
+            b.setText("");
+            b.setEnabled(true);
+        }
+        currPlayer = Player.X;
+    }
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         
